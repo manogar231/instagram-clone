@@ -9,8 +9,11 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -44,7 +47,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getUserProfile(Long id) throws Exception {
+    public UserDto getUserProfileById(Long id) throws Exception {
        Optional<User> optionalUser = userRepository.findById(id);
 
        if (optionalUser.isEmpty()){
@@ -52,4 +55,49 @@ public class UserServiceImpl implements UserService {
        }
         return mapper.map(optionalUser.get(),UserDto.class);
     }
+
+    public List<UserDto> getAllUsers(){
+        List<User> users = userRepository.findAll();
+        return users.stream().map(User -> mapper.map(User, UserDto.class)).collect(Collectors.toList());
+    }
+
+    public User updateUserById(Long id, UserDto userDTO) throws Exception {
+        User user1 = userRepository.findById(id).orElseThrow(() -> new Exception("User not found"));
+
+        if (Objects.nonNull(userDTO.getUserName())) {
+            user1.setUserName(userDTO.getUserName());
+        }
+        if (Objects.nonNull(userDTO.getEmail())) {
+            user1.setEmail(userDTO.getEmail());
+        }
+        if (Objects.nonNull(userDTO.getProfilePictureUrl())) {
+            user1.setProfilePictureUrl(userDTO.getProfilePictureUrl());
+        }
+        if (Objects.nonNull(userDTO.getBio())) {
+            user1.setBio(userDTO.getBio());
+        }
+
+        return userRepository.save(user1);
+    }
+
+    public Object statusUpdate(Long id) throws Exception {
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isEmpty()) {
+            throw new Exception("User Not Found!!");
+        }
+        User user = optionalUser.get();
+        userRepository.updateStatusForUser(id, user.getStatus());
+        return "User status updated successfully";
+    }
+
+    @Override
+    public Object deleteUserById(Long id) throws Exception {
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isEmpty()) {
+            throw new Exception("User Not Found!!");
+        }
+        userRepository.deleteUser(id);
+        return "User deleted successfully";
+    }
+
 }
