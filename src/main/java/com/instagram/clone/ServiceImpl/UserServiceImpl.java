@@ -52,4 +52,36 @@ public class UserServiceImpl implements UserService {
        }
         return mapper.map(optionalUser.get(),UserDto.class);
     }
+
+    @Override
+    public String deleteUserProfile(Long id) throws Exception {
+      Optional<User> optionalUser = userRepository.findById(id);
+      if (optionalUser.isEmpty()){
+          throw new Exception("user not found !!");
+      }
+      if (optionalUser.get().getStatus().equals(Status.DELETED)||optionalUser.get().getStatus().equals(Status.IN_ACTIVE)){
+          throw new Exception("User Already Deleted or IN-Active !!");
+      }
+      User user = optionalUser.get();
+      user.setStatus(Status.DELETED);
+      userRepository.save(user);
+      return "User Saved Successfully !!";
+    }
+
+    @Override
+    public String updateUserProfile(UserDto userDto, Long id) throws Exception {
+
+        Optional<User> optionalUser = userRepository.findById(id);
+
+        if (optionalUser.isEmpty()) throw new Exception("user not found !!");
+
+        User user = optionalUser.get();
+        user.setUserName(userDto.getUserName());
+        user.setEmail(userDto.getEmail());
+        user.setBio(userDto.getBio());
+        user.setProfilePictureUrl(userDto.getProfilePictureUrl());
+        userRepository.save(user);
+
+        return "User Updated Successfully !!";
+    }
 }

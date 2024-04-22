@@ -11,4 +11,8 @@ public interface PostService {
     Object doPost(PostDto postDto);
 
     List<Post> getAllPost();
+
+    String likePost(Long postId, Long userId);
+
+    String commentOnPost(Long postId, Long userId, String content);
 }

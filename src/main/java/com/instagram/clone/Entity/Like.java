@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Entity
 @Data
 @AllArgsConstructor
@@ -13,15 +15,28 @@ import lombok.NoArgsConstructor;
 public class Like {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    public Long id;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    public User user;
 
     @ManyToOne
     @JoinColumn(name = "post_id")
-    private Post post;
+    public Post post;
 
+    public Date created_At;
+
+    public Date updated_At;
+
+    @PrePersist
+    protected void onCreate() {
+        this.created_At = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updated_At = new Date();
+    }
 }
 

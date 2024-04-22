@@ -24,4 +24,14 @@ public class PostController {
     public List<Post> getAllPost(){
         return postService.getAllPost();
     }
+
+    @PostMapping("/{postId}/like")
+    public String likePost(@PathVariable Long postId, @RequestParam Long userId){
+        return postService.likePost(postId, userId);
+    }
+
+    @PostMapping("/{postId}/comment")
+    public String commentOnPost(@PathVariable Long postId, @RequestParam Long userId, @RequestParam String content) {
+        return postService.commentOnPost(postId, userId, content);
+    }
 }
