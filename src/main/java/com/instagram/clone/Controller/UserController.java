@@ -32,4 +32,16 @@ public class UserController {
     public String UpdateUserProfile(@PathVariable Long id ,@RequestBody UserDto userDto) throws Exception {
         return userService.updateUserProfile(userDto,id);
     }
+
+    @PostMapping("/follow/{id}")
+    public String followUser(@PathVariable long id, @RequestBody long targetUserId){
+        return userService.followUser(id, targetUserId);
+    }
+
+    @PostMapping("/follow/{id}")
+    public String unFollowUser(@PathVariable long id, @RequestBody long targetUserId){
+        return userService.unfollowUser(id, targetUserId);
+    }
+
+
 }

@@ -126,9 +126,14 @@ public class PostServiceImpl implements PostService {
             comment.setPost(optionalPost.get());
             comment.setUser(optionalUser.get());
             comment.setContent(content);
-
-            Post post = optionalPost.get();
             // Save the comment to the database
+            commentRepository.save(comment);
+
+            // Add the comment to the post's list of comments
+            Post post = optionalPost.get();
+            post.getComments().add(comment);
+
+            // Save the updated post to update the association with the comment
             postRepository.save(post);
 
             return "Comment added successfully!";

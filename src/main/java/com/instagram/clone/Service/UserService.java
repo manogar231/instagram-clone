@@ -12,4 +12,8 @@ public interface UserService {
     String deleteUserProfile(Long id) throws Exception;
 
     String updateUserProfile(UserDto userDto,Long id) throws Exception;
+
+    String followUser(long id, long targetUserId);
+
+    String unfollowUser(long id, long targetUserId);
 }

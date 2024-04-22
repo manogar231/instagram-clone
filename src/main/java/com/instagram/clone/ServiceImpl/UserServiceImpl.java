@@ -1,8 +1,10 @@
 package com.instagram.clone.ServiceImpl;
 
 import com.instagram.clone.Dto.UserDto;
+import com.instagram.clone.Entity.Follow;
 import com.instagram.clone.Entity.User;
 import com.instagram.clone.Enum.Status;
+import com.instagram.clone.Repository.FollowRepository;
 import com.instagram.clone.Repository.UserRepository;
 import com.instagram.clone.Service.UserService;
 import org.modelmapper.ModelMapper;
@@ -20,6 +22,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private ModelMapper mapper;
+
+    @Autowired
+    private FollowRepository followRepository;
 
     @Override
     public String createUser(UserDto userDto) {
@@ -84,4 +89,84 @@ public class UserServiceImpl implements UserService {
 
         return "User Updated Successfully !!";
     }
+
+    @Override
+    public String followUser(long id, long targetUserId) {
+        // Check if both users exist
+        Optional<User> userOptional = userRepository.findById(id);
+        Optional<User> targetUserOptional = userRepository.findById(targetUserId);
+        if (userOptional.isEmpty() || targetUserOptional.isEmpty()) {
+            return "Failed to follow user: User(s) not found.";
+        }
+
+        User user = userOptional.get();
+        User targetUser = targetUserOptional.get();
+
+        // Check if the user is already following the target user
+        boolean isFollowing = user.getFollowing().stream()
+                .anyMatch(follow -> follow.getFollowedUser().getId().equals(targetUserId));
+        if (isFollowing) {
+            return "Failed to follow user: User is already following the target user.";
+        }
+
+        // Create a new Follow entity
+        Follow follow = new Follow();
+        follow.setFollowerUser(user);
+        follow.setFollowedUser(targetUser);
+
+        // Add the follow relationship to the user's following list
+        user.getFollowing().add(follow);
+
+        // Add the follow relationship to the target user's followers list
+        targetUser.getFollowers().add(follow);
+
+        // Save the follow data
+        followRepository.save(follow);
+
+        // Save both users to persist the changes
+        userRepository.save(user);
+        userRepository.save(targetUser);
+
+        return "User followed successfully!";
+    }
+
+    public String unfollowUser(long id, long targetUserId) {
+        // Check if both users exist
+        Optional<User> userOptional = userRepository.findById(id);
+        Optional<User> targetUserOptional = userRepository.findById(targetUserId);
+        if (userOptional.isEmpty() || targetUserOptional.isEmpty()) {
+            return "Failed to unfollow user: User(s) not found.";
+        }
+
+        User user = userOptional.get();
+        User targetUser = targetUserOptional.get();
+
+        // Find the follow entity representing the follow relationship
+        Optional<Follow> followOptional = user.getFollowing().stream()
+                .filter(follow -> follow.getFollowedUser().getId().equals(targetUserId))
+                .findFirst();
+
+        if (followOptional.isEmpty()) {
+            return "Failed to unfollow user: User is not following the target user.";
+        }
+
+        Follow follow = followOptional.get();
+
+        // Remove the follow relationship from the user's following list
+        user.getFollowing().remove(follow);
+
+        // Remove the follow relationship from the target user's followers list
+        targetUser.getFollowers().remove(follow);
+
+        // Delete the Follow entity to remove the follow relationship
+        followRepository.delete(follow);
+
+        // Save both users to persist the changes
+        userRepository.save(user);
+        userRepository.save(targetUser);
+
+        return "User unfollowed successfully!";
+    }
+
+
 }
