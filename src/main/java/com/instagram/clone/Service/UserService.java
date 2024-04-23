@@ -16,4 +16,6 @@ public interface UserService {
     String followUser(long id, long targetUserId);
 
     String unfollowUser(long id, long targetUserId);
+
+    String followBack(Long userId, Long followerUserId);
 }

@@ -41,6 +41,7 @@ public class UserServiceImpl implements UserService {
                     .profilePictureUrl(userDto.getProfilePictureUrl())
                     .status(Status.ACTIVE)
                     .build();
+
           userRepository.save(user);
         }catch (Exception ex){
 
@@ -166,6 +167,44 @@ public class UserServiceImpl implements UserService {
         userRepository.save(targetUser);
 
         return "User unfollowed successfully!";
+    }
+
+    @Override
+    public String followBack(Long userId, Long followerUserId) {
+        // Check if both users exist
+        Optional<User> userOptional = userRepository.findById(userId);
+        Optional<User> followerUserOptional = userRepository.findById(followerUserId);
+        if (userOptional.isEmpty() || followerUserOptional.isEmpty()) {
+            return "Failed to follow back: User(s) not found.";
+        }
+
+        User user = userOptional.get();
+        User followerUser = followerUserOptional.get();
+
+        // Check if the user is already following the follower user
+        boolean isFollowing = user.getFollowing().stream()
+                .anyMatch(follow -> follow.getFollowedUser().getId().equals(followerUserId));
+        if (isFollowing) {
+            return "Failed to follow back: User is already following the follower user.";
+        }
+
+        // Create a new Follow entity for the follow-back relationship
+        Follow followBack = new Follow();
+        followBack.setFollowerUser(user);
+        followBack.setFollowedUser(followerUser);
+
+        // Add the follow-back relationship to the user's following list
+        user.getFollowing().add(followBack);
+
+        // Add the follow-back relationship to the follower user's followers list
+        followerUser.getFollowers().add(followBack);
+
+        followRepository.save(followBack);
+        // Save both users to persist the changes
+        userRepository.save(user);
+        userRepository.save(followerUser);
+
+        return "Follow back successful!";
     }
 
 

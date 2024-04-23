@@ -43,5 +43,10 @@ public class UserController {
         return userService.unfollowUser(id, targetUserId);
     }
 
+    @PostMapping("/follow-back/{userId}/{followerUserId}")
+    public String followBack(@PathVariable Long userId, @PathVariable Long followerUserId){
+      return userService.followBack(userId,followerUserId);
+    }
+
 
 }
