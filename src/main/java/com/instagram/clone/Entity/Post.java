@@ -24,7 +24,7 @@ public class Post {
     public Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id",referencedColumnName = "User_id")
+    @JoinColumn(name = "user_id",referencedColumnName = "user_id")
     public User user;
 
     @Column(name = "Image_Url")
@@ -33,11 +33,11 @@ public class Post {
     @Column(name = "Caption")
     public String caption;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Like> likes;
 
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     public List<Comment> comments;
 
     @Column(name = "Created_at")

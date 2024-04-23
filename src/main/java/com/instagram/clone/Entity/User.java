@@ -1,5 +1,7 @@
 package com.instagram.clone.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.instagram.clone.Enum.Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -13,13 +15,13 @@ import java.util.List;
 @Data
 @Builder
 @Entity
-@Table(name = "User")
+@Table(name = "user_table")
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "User_id")
     public Long id;
 
@@ -40,6 +42,7 @@ public class User {
 
     @OneToMany(mappedBy = "followedUser", cascade = CascadeType.ALL)
     public List<Follow> followers;
+
 
     @OneToMany(mappedBy = "followerUser", cascade = CascadeType.ALL)
     public List<Follow> following;

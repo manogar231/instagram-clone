@@ -19,7 +19,7 @@ public class UserController {
     }
 
     @GetMapping("/get-my-profile/{id}")
-    public UserDto getUserProfile(@PathVariable Long id) throws Exception {
+    public User getUserProfile(@PathVariable Long id) throws Exception {
         return userService.getUserProfile(id);
     }
 
@@ -38,7 +38,7 @@ public class UserController {
         return userService.followUser(id, targetUserId);
     }
 
-    @PostMapping("/follow/{id}")
+    @PostMapping("/unfollow/{id}")
     public String unFollowUser(@PathVariable long id, @RequestBody long targetUserId){
         return userService.unfollowUser(id, targetUserId);
     }
@@ -47,6 +47,5 @@ public class UserController {
     public String followBack(@PathVariable Long userId, @PathVariable Long followerUserId){
       return userService.followBack(userId,followerUserId);
     }
-
 
 }

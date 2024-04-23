@@ -50,13 +50,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getUserProfile(Long id) throws Exception {
+    public User getUserProfile(Long id) throws Exception {
        Optional<User> optionalUser = userRepository.findById(id);
 
        if (optionalUser.isEmpty()){
           throw new Exception("User Not Found!!");
        }
-        return mapper.map(optionalUser.get(),UserDto.class);
+        return optionalUser.get();
     }
 
     @Override
@@ -199,7 +199,7 @@ public class UserServiceImpl implements UserService {
         // Add the follow-back relationship to the follower user's followers list
         followerUser.getFollowers().add(followBack);
 
-        followRepository.save(followBack);
+        //followRepository.save(followBack);
         // Save both users to persist the changes
         userRepository.save(user);
         userRepository.save(followerUser);

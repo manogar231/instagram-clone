@@ -11,7 +11,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "Like")
+@Table(name = "Likes")
 public class Like {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
