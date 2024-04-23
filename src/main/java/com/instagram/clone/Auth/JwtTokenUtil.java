@@ -2,12 +2,16 @@ package com.instagram.clone.Auth;
 
 import com.instagram.clone.Entity.User;
 import com.instagram.clone.Repository.UserRepository;
-
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 
 import java.io.Serializable;
 import java.util.Date;
@@ -18,15 +22,31 @@ import java.util.function.Function;
 
 @Component
 public class JwtTokenUtil implements Serializable {
+
+
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
     private static final long serialVersionUID = -2550185165626007488L;
+    private static final String SECRET_KEY = "yourSecretKey";
+    private static final long EXPIRATION_TIME = 86400000;
     @Autowired
     UserRepository userRepository;
     @Value("${jwt.secret}")
-    private String secret;
+    private static String secret;
+
+    public static String  generateToken(String usernameFromJwt) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + EXPIRATION_TIME);
+
+        return Jwts.builder()
+                .setSubject(usernameFromJwt)
+                .setIssuedAt(now)
+                .setExpiration(expiryDate)
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .compact();
+    }
 
     //retrieve username from jwt token
-    public String getUsernameFromJwt(String token) {
+    public static String getUsernameFromJwt(String token) {
 
         Claims claims = Jwts.parser()
                 .setSigningKey(secret)

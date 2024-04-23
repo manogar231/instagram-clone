@@ -1,6 +1,7 @@
 package com.instagram.clone.Controller;
 
 import com.instagram.clone.Dto.UserDto;
+import com.instagram.clone.Entity.UserRequest;
 import com.instagram.clone.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -43,5 +44,12 @@ public class UserController {
     public Object deleteUserById(@PathVariable("id") Long id) throws Exception{
         return userService.deleteUserById(id);
     }
+
+    @PostMapping("/login")
+    public Object userLogin(@RequestBody UserRequest userRequest, String usernameFromJwt) throws Exception{
+        return userService.loginUser(userRequest, usernameFromJwt);
+    }
+
+
 
 }

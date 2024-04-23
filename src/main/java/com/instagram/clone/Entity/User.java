@@ -59,6 +59,9 @@ public class User {
     @Column(name = "Updated_at")
     public Date updatedAt;
 
+    @Column(name = "one_time_password")
+    private String oneTimePassword;
+
 
     @PrePersist
     protected void onCreate() {
